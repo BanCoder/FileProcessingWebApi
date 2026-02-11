@@ -13,6 +13,6 @@ namespace DataAccess.Model
 		public DateTime Date { get; set; }
 		public double ExecutionTime { get; set; }
 		public double IndicatorValue { get; set; }
-		public DateTime CreatedAt { get; set; } = DateTime.UtcNow; 
+		public DateTime CreatedAt { get; set; } 
 	}
 }

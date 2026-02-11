@@ -17,6 +17,6 @@ namespace DataAccess.Model
 		public double MedianValue { get; set; }
 		public double MaxValue { get; set; }
 		public double MinValue { get; set; }
-		public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+		public DateTime CreatedAt { get; set; }
 	}
 }
