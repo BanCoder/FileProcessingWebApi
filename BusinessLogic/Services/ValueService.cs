@@ -1,0 +1,28 @@
+﻿using DataAccess.Model;
+using DataAccess.Repository;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BusinessLogic.Services
+{
+	public class ValueService: IValueService
+	{
+		private readonly IValueRepository _valueRepository; 
+		public ValueService(IValueRepository valueRepository)
+		{
+			_valueRepository = valueRepository;
+		}
+		public async Task<List<Value>> GetLastTenValuesAsync(string fileName)
+		{
+			bool isFileExist = await _valueRepository.ExistsByFileNameAsync(fileName);
+			if (!isFileExist)
+			{
+				throw new Exception($"Файл с именем {fileName} не найден");
+			}
+			return await _valueRepository.GetLastTenValuesByFileNameAsync(fileName);
+		}
+	}
+}

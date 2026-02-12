@@ -1,0 +1,20 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace DataAccess.Model
+{
+	public class ResultDto
+	{
+		public string FileName { get; set; }
+		public DateTime StartDate { get; set; }
+		public double DeltaSeconds { get; set; }
+		public double AvgExecutionTime { get; set; }
+		public double AvgValue { get; set; }
+		public double MedianValue { get; set; }
+		public double MaxValue { get; set; }
+		public double MinValue { get; set; }
+	}
+}

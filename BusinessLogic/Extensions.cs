@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using BusinessLogic.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BusinessLogic
 {
@@ -6,6 +7,9 @@ namespace BusinessLogic
 	{
 		public static IServiceCollection AddBusinessLogic(this IServiceCollection serviceCollection)
 		{
+			serviceCollection.AddScoped<IFileProcessingService, FileProcessingService>(); 
+			serviceCollection.AddScoped<IValueService, ValueService>();
+			serviceCollection.AddScoped<IResultService, ResultService>(); 
 			return serviceCollection;
 		}
 	}
