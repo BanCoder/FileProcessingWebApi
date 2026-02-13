@@ -12,7 +12,7 @@ namespace DataAccess
 			var connectionString = configuration.GetConnectionString("DefaultConnection");
 			serviceCollection.AddScoped<IValueRepository, ValueRepository>();
 			serviceCollection.AddScoped<IResultRepository, ResultRepository>(); 
-			serviceCollection.AddDbContext<AppContext>(x =>
+			serviceCollection.AddDbContext<ApplicationContext>(x =>
 			{
 				x.UseNpgsql(connectionString);
 			});

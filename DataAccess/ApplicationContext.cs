@@ -1,16 +1,11 @@
 ﻿using DataAccess.Model;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccess
 {
-	public class AppContext : DbContext
+	public class ApplicationContext : DbContext
 	{
-		public AppContext(DbContextOptions<AppContext> options) : base(options) { }
+		public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) { }
 		public DbSet<Value> Values { get; set; }
 		public DbSet<Result> Results { get; set; }
 		protected override void OnModelCreating(ModelBuilder modelBuilder)

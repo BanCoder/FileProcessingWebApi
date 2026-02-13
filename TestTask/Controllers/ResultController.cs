@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using BusinessLogic.Services;
+﻿using BusinessLogic.Services.Interfaces;
 using DataAccess.Model;
+using Microsoft.AspNetCore.Mvc;
 namespace TestTaskWeb.Controllers
 {
 	[ApiController]

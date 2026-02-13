@@ -1,10 +1,6 @@
-﻿using DataAccess.Model;
+﻿using BusinessLogic.Services.Interfaces;
+using DataAccess.Model;
 using DataAccess.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLogic.Services
 {

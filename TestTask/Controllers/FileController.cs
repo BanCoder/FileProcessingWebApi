@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using BusinessLogic.Services;
+﻿using BusinessLogic.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 namespace TestTaskWeb.Controllers
 {
 	[ApiController]

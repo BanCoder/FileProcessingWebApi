@@ -1,17 +1,12 @@
 ﻿using DataAccess.Model;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccess.Repository
 {
 	public class ResultRepository: IResultRepository
 	{
-		private readonly AppContext _context; 
-		public ResultRepository(AppContext context)
+		private readonly ApplicationContext _context; 
+		public ResultRepository(ApplicationContext context)
 		{
 			_context = context;
 		}
@@ -25,6 +20,11 @@ namespace DataAccess.Repository
 		{
 			_context.Results.Update(result); 
 			await _context.SaveChangesAsync(cancellationToken);
+		}
+		public async Task DeleteAsync(Result result, CancellationToken cancellationToken)
+		{
+			_context.Results.RemoveRange(result);
+			await _context.SaveChangesAsync(cancellationToken); 
 		}
 		public async Task<Result?> GetByFileNameAsync(string fileName, CancellationToken cancellationToken)
 		{

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace BusinessLogic.Services
+namespace BusinessLogic.Services.Interfaces
 {
 	public interface IFileProcessingService
 	{

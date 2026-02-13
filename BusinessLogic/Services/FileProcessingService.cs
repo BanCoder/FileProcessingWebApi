@@ -1,8 +1,10 @@
-﻿using BusinessLogic.Validation;
+﻿using BusinessLogic.Factories;
+using BusinessLogic.Parsers;
+using BusinessLogic.Services.Interfaces;
+using DataAccess;
 using DataAccess.Model;
 using DataAccess.Repository;
 using Microsoft.AspNetCore.Http;
-using System.ComponentModel.DataAnnotations;
 
 namespace BusinessLogic.Services
 {
@@ -10,63 +12,57 @@ namespace BusinessLogic.Services
 	{
 		private readonly IValueRepository _valueRepository;
 		private readonly IResultRepository _resultRepository;
-		private readonly FileValidator _fileValidator;
-		private readonly FileRowValidator _rowValidator; 
-		public FileProcessingService(FileValidator fileValidator, FileRowValidator rowValidator, IValueRepository valueRepository, IResultRepository resultRepository)
+		private readonly IValidatorService _validator;
+		private readonly ApplicationContext _context;
+		private readonly IEntityFactory _factory; 
+		private readonly IFileParser _parser; 
+		public FileProcessingService(IValidatorService validator,IValueRepository valueRepository, IResultRepository resultRepository, ApplicationContext context, IEntityFactory factory, IFileParser parser)
 		{
-			_fileValidator = fileValidator;
-			_rowValidator = rowValidator;
 			_valueRepository = valueRepository;
 			_resultRepository = resultRepository;
+			_context = context;
+			_factory = factory;
+			_parser = parser;
+			_validator = validator;
 		}
 		public async Task ProcessFileAsync(IFormFile file)
 		{
-			var fileValidation = await _fileValidator.ValidateAsync(file);
-			if (!fileValidation.IsValid)
+			await _validator.ValidateFileAsync(file);
+			List<FileRowDto> rows = await _parser.ParseCsvAsync(file); 
+			await _validator.ValidateRowsAsync(rows);
+			await ProcessFileDataAsync(file.FileName, rows);
+		}
+		private async Task ProcessFileDataAsync(string fileName, List<FileRowDto> rows)
+		{
+			await using var transaction = await _context.Database.BeginTransactionAsync();
+			try
 			{
-				throw new ValidationException(fileValidation.Errors.ToString()); 
+				await DeleteExistingDataAsync(fileName);
+				var values = _factory.CreateValueEntities(fileName, rows);
+				await _valueRepository.AddValueAsync(values);
+
+				var result = _factory.CreateResultEntity(fileName, values);
+				await _resultRepository.AddAsync(result); 
+
+				await transaction.CommitAsync();
 			}
-			List<FileRowDto> rows = await ParseCsvAsync(file); 
-			if(rows.Count < 1 || rows.Count > 10000)
+			catch
 			{
-				throw new ValidationException($"Количество строк файла: {rows.Count}. Допустимй диапозон (1-10000)");
-			}
-			foreach(var row in rows)
-			{
-				var rowValidation = await _rowValidator.ValidateAsync(row);
-				if (!rowValidation.IsValid)
-				{
-					throw new ValidationException(rowValidation.Errors.ToString()); 
-				}
+				await transaction.RollbackAsync();
+				throw; 
 			}
 		}
-		public async Task<List<FileRowDto>> ParseCsvAsync(IFormFile file)
+		private async Task DeleteExistingDataAsync(string fileName)
 		{
-			var result = new List<FileRowDto>();
-			using var reader = new StreamReader(file.OpenReadStream());
-			string line;
-			int lineNumber = 0; 
-			while((line = await reader.ReadLineAsync()) != null)
+			if(await _valueRepository.ExistsByFileNameAsync(fileName))
 			{
-				lineNumber++; 
-				if(lineNumber == 1)
+				await _valueRepository.DeleteByFileNameAsync(fileName);
+				var existingResult = await _resultRepository.GetByFileNameAsync(fileName);
+				if(existingResult != null)
 				{
-					continue;
+					await _resultRepository.DeleteAsync(existingResult);
 				}
-				var parts = line.Split(';');
-				if(parts.Length != 3)
-				{
-					throw new Exception($"Строка {lineNumber}: неверное количество колонок"); 
-				}
-				var row = new FileRowDto
-				{
-					Date = DateTime.Parse(parts[0]), 
-					ExecutionTime = double.Parse(parts[1]),
-					Value = double.Parse(parts[2])
-				}; 
-				result.Add(row);
 			}
-			return result; 
 		}
 	}
 }

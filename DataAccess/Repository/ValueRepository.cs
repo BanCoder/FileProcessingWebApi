@@ -1,22 +1,16 @@
 ﻿using DataAccess.Model;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.Internal;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccess.Repository
 {
 	public class ValueRepository: IValueRepository
 	{
-		private readonly AppContext _context; 
-		public ValueRepository(AppContext context)
+		private readonly ApplicationContext _context; 
+		public ValueRepository(ApplicationContext context)
 		{
 			_context = context;
 		}
-		public async Task AddRangeAsync(List<Value> values, CancellationToken cancellationToken)
+		public async Task AddValueAsync(List<Value> values, CancellationToken cancellationToken)
 		{
 			foreach(var value in values)
 			{
