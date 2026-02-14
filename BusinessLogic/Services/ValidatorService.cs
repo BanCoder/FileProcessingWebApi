@@ -29,13 +29,19 @@ namespace BusinessLogic.Services
 			{
 				throw new ValidationException($"Количество строк файла: {rows.Count}. Допустимй диапозон (1-10000)");
 			}
-			foreach (var row in rows)
+			var errors = new List<string>();
+			for (int i = 0; i < rows.Count; i++)
 			{
-				var rowValidation = await _rowValidator.ValidateAsync(row);
+				var rowValidation = await _rowValidator.ValidateAsync(rows[i]);
 				if (!rowValidation.IsValid)
 				{
-					throw new ValidationException(rowValidation.Errors.ToString());
+					var rowErrors = rowValidation.Errors.Select(e => $"Строка {i + 2}: {e.ErrorMessage}");
+					errors.AddRange(rowErrors);
 				}
+			}
+			if (errors.Any())
+			{
+				throw new ValidationException(string.Join("; ", errors));
 			}
 		}
 	}

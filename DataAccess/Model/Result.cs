@@ -3,7 +3,7 @@
 	public class Result
 	{
 		public Guid Id { get; set; }
-		public string FileName { get; set; }
+		public string? FileName { get; set; }
 		public DateTime StartDate { get; set; }
 		public double DeltaSeconds { get; set; }
 		public double AvgExecutionTime { get; set; }
