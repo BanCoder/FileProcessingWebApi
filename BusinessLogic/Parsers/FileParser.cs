@@ -32,7 +32,7 @@ namespace BusinessLogic.Parsers
 				{
 					Date = ParseCustomDate(parts[0]),
 					ExecutionTime = double.Parse(parts[1], CultureInfo.InvariantCulture),
-					Value = double.Parse(parts[2])
+					Value = double.Parse(parts[2], CultureInfo.InvariantCulture)
 				};
 				result.Add(row);
 			}
